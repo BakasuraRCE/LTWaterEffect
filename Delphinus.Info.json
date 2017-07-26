@@ -5,6 +5,5 @@
     "license_type": "MIT",
     "license_file": "LICENSE",
     "platforms": "Win32;Win64",
-    "package_compiler_min": 7,
-    "compiler_min": 7
+    "package_compiler_min": 7
 }
