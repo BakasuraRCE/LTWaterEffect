@@ -16,11 +16,6 @@
             "folder": "Source"
         }
     ],
-    "raw_folders": [
-        {
-            "folder": "DelphiXEBinaries"
-        }
-    ],
     "projects": [
         {
             "project": "Packages\\LTEffects.dproj"
