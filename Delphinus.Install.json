@@ -5,18 +5,12 @@
             "platforms": "Win32;Win64"
         }
     ],
-    "browsing_pathes": [
-        {
-            "pathes": "Source",
-            "platforms": "Win32;Win64"
-        }
-    ],
     "source_folders": [
         {
-            "folder": "Source",
-            "base": ".",
+            "folder": "",
+            "base": "",
             "recursive": true,
-            "filter": "*"
+            "filter": "*;*.*"
         }
     ],
     "projects": [
