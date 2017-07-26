@@ -2,7 +2,9 @@
 
 **Description:** It simulates water effect, partially based on Roy Willense's
 
-**excellent tutorial, available at:** http://www.gamedev.net/reference/articles/article915.asp
+**Excellent tutorial, available (https://www.gamedev.net/articles/programming/graphics/the-water-effect-explained-r915)[here]**
+
+**Delphinus-Support**
 
 Also partially based on FLUID's demo (FLUiD - NeMeSiS production - only info I got).
 
@@ -24,6 +26,3 @@ the images. I'll proably add the checks later.
 
 Optimize, optimize. It is still very slow, specially the ArcTan draw. It only
 works for 32 bit images, maybe adding a way to chose the pixel format.
-
-
-**Delphinus-Support**
