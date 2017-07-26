@@ -1,0 +1,8 @@
+LT Water Effect Changelog
+=========================
+
+1.1.0
+Bug fixed: The waves do not dissipate at the edges of the image
+
+1.0.0
+Initial release

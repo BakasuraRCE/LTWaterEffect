@@ -1,0 +1,8 @@
+{
+    "id": "{A3A604FC-FE1B-43C3-AA37-BC5E0E04DD29}",
+    "name": "LT Water Effect",
+    "picture": "logo.png",
+    "license_type": "MIT",
+    "license_file": "LICENSE",
+    "platforms": "Win32;Win64"
+}

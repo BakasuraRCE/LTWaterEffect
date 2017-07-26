@@ -1,0 +1,29 @@
+{
+    "search_pathes": [
+        {
+            "pathes": "Source",
+            "platforms": "Win32;Win64"
+        }
+    ],
+    "browsing_pathes": [
+        {
+            "pathes": "Source",
+            "platforms": "Win32;Win64"
+        }
+    ],
+    "source_folders": [
+        {
+            "folder": "Source"
+        }
+    ],
+    "raw_folders": [
+        {
+            "folder": "DelphiXEBinaries"
+        }
+    ],
+    "projects": [
+        {
+            "project": "Packages\\LTEffects.dproj"
+        }
+    ]
+}
