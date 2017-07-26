@@ -7,7 +7,7 @@ unit unDemo;
 interface
 
 uses
-  Forms,Graphics, LTWaterEffect, StdCtrls, ExtCtrls, Controls, Classes;
+  Forms, Graphics, LTWaterEffect, StdCtrls, ExtCtrls, Controls, Classes;
 
 type
   TForm1 = class(TForm)
@@ -20,6 +20,8 @@ type
     procedure Image2MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure Button2Click(Sender: TObject);
+    procedure Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
   private
     { Private declarations }
   public
@@ -33,44 +35,52 @@ implementation
 
 {$R *.dfm}
 
+
 procedure TForm1.Button1Click(Sender: TObject);
-var x,y:integer;
-    P : PRGB32Array;
-    BitMap : TBitMap;
+var
+  X, Y: Integer;
+  P: PRGB32Array;
+  BitMap: TBitMap;
 begin
-   DoubleBuffered := true;
-   BitMap := TBitMap.Create;  // Draw Something nice...
-   try
-     with BitMap do
-     begin
-       height := Image1.height;
-       width := Image1.width;
-       PixelFormat := pf32bit;
-       for y:=0 to height - 1 do
-       begin
-         P := ScanLine[y];
-         x := 0;
-         while x < width do
-         begin
-           P[x].R := x xor y;
-           P[x].G := 0;
-           P[x].B := 0;
-           P[x].A := 0;
-           inc(x);
-         end;
-       end;
-     end;
-     Image1.Canvas.Draw(0,0,BitMap);
-   finally
-     BitMap.Free;
-   end;
-   LTWaterEffect1.Start;  // Start the fun
+  DoubleBuffered := true;
+  BitMap := TBitMap.Create; // Draw Something nice...
+  try
+    with BitMap do
+    begin
+      height := Image1.height;
+      width := Image1.width;
+      PixelFormat := pf32bit;
+      for Y := 0 to height - 1 do
+      begin
+        P := ScanLine[Y];
+        X := 0;
+        while X < width do
+        begin
+          P[X].R := X xor Y;
+          P[X].G := 0;
+          P[X].B := 0;
+          P[X].A := 0;
+          inc(X);
+        end;
+      end;
+    end;
+    Image1.Canvas.Draw(0, 0, BitMap);
+  finally
+    BitMap.Free;
+  end;
+  LTWaterEffect1.Start; // Start the fun
 end;
 
 procedure TForm1.Image2MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  LTWaterEffect1.Disturb(X,Y,5000);
+  LTWaterEffect1.Disturb(X, Y, 5000);
+end;
+
+procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  LTWaterEffect1.Disturb(X, Y, 5000);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
