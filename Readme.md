@@ -2,7 +2,7 @@
 
 **Description:** It simulates water effect, partially based on Roy Willense's
 
-**Excellent tutorial, available (https://www.gamedev.net/articles/programming/graphics/the-water-effect-explained-r915)[here]**
+**Excellent tutorial, available [here](https://www.gamedev.net/articles/programming/graphics/the-water-effect-explained-r915)**
 
 **Delphinus-Support**
 
