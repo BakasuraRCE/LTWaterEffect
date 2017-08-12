@@ -43,6 +43,8 @@ uses
   SysUtils, Classes, ExtCtrls;
 
 type
+  TErrorEvent = procedure(E: Exception) of object;
+
   TRGB32 = packed record
     B, G, R, A: byte;
   end;
@@ -78,6 +80,7 @@ type
     FRaining: Boolean;
     FRainTimerInterval: Integer;
     FRainTimer: TTimer;
+    FOnError: TErrorEvent;
     procedure SetDstImage(const Value: TImage);
     procedure SetSrcImage(const Value: TImage);
     procedure SetReflecionIndex(const Value: Integer);
@@ -94,6 +97,7 @@ type
     procedure Calculate;
     procedure DoTimer(Sender: TObject);
     procedure DoRainTimer(Sender: TObject);
+    procedure DoError(E: Exception);
   public
     procedure Disturb(X, Y, Amount: Integer);
     procedure Start;
@@ -114,6 +118,7 @@ type
     property Refresh: Boolean read FRefresh write SetRefresh default true;
     property RainAmount: Integer read FRainAmount write SetRainAmount default 1000;
     property RainTimerInterval: Integer read FRainTimerInterval write SetRainTimerInterval default 150;
+    property OnError: TErrorEvent read FOnError write FOnError;
   end;
 
 procedure Register;
@@ -159,7 +164,7 @@ constructor TLTWaterEffect.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FTimer := TTimer.Create(nil);
-  FTimer.Enabled := false;
+  FTimer.Enabled := False;
   FTimer.OnTimer := DoTimer;
   FTimerInterval := 5;
   FTimer.Interval := 5;
@@ -170,7 +175,7 @@ begin
   FRefresh := true;
   FAlgorithm := waSinTan;
   FRainTimer := TTimer.Create(nil);
-  FRainTimer.Enabled := false;
+  FRainTimer.Enabled := False;
   FRainTimer.OnTimer := DoRainTimer;
   FRainTimerInterval := 150;
   FRainTimer.Interval := 150;
@@ -190,6 +195,16 @@ begin
       FHeightMap[FPage][(FWidth - X) * FHeight + Y] := Amount;
 end;
 
+procedure TLTWaterEffect.DoError(E: Exception);
+begin
+
+  StopRain;
+  Stop;
+
+  if Assigned(FOnError) then
+    FOnError(E);
+end;
+
 procedure TLTWaterEffect.DoRainTimer(Sender: TObject);
 begin
   if FActive then
@@ -202,18 +217,26 @@ begin
     exit;
   FDrawing := true;
   try
-    FCurrentPage := @FHeightMap[FPage]; // Used pointers hoping to get some
-    FNewPage := @FHeightMap[1 - FPage]; // speed up, avoiding accessing the array.
-    if FAlgorithm = waSinTan then
-      DrawSinTan
-    else
-      DrawCalc;
-    Calculate;
-    FPage := 1 - FPage;
+    try
+      FCurrentPage := @FHeightMap[FPage]; // Used pointers hoping to get some
+      FNewPage := @FHeightMap[1 - FPage]; // speed up, avoiding accessing the array.
+      if FAlgorithm = waSinTan then
+        DrawSinTan
+      else
+        DrawCalc;
+      Calculate;
+      FPage := 1 - FPage;
+    except
+      on E: Exception do
+      begin
+        FDrawing := False;
+        DoError(E);
+      end;
+    end;
   finally
     if FRefresh then
       DstImage.Refresh;
-    FDrawing := false;
+    FDrawing := False;
   end;
 end;
 
@@ -277,13 +300,20 @@ begin
       oX := FCurrentPage^[O] - FCurrentPage^[O + FHeight];
       oY := FCurrentPage^[O] - FCurrentPage^[O + 1];
 
-      xAngle := ArcTan(oX);
-      XRefraction := ArcSin(Sin(xAngle) / FReflectionIndex);
-      XDisplace := Trunc(Tan(XRefraction) * oX);
+      // Unoptimized code
+      // xAngle := ArcTan(oX);
+      // XRefraction := ArcSin(Sin(xAngle) / FReflectionIndex);
+      // XDisplace := Trunc(Tan(XRefraction) * oX);
+      XDisplace := Trunc(Power(oX, 2) / (sqrt(1 + Power(oX, 2) * (1 - 1 / Power(FReflectionIndex, 2))) *
+            FReflectionIndex));
 
-      yAngle := ArcTan(oY);
-      yRefraction := ArcSin(Sin(yAngle) / FReflectionIndex);
-      YDisplace := Trunc(Tan(yRefraction) * oY);
+      // Unoptimized code
+      // yAngle := ArcTan(oY);
+      // yRefraction := ArcSin(Sin(yAngle) / FReflectionIndex);
+      // YDisplace := Trunc(Tan(yRefraction) * oY);
+      YDisplace := Trunc(Power(oY, 2) / (sqrt(1 + Power(oY, 2) * (1 - 1 / Power(FReflectionIndex, 2))) *
+            FReflectionIndex));
+
       if oX < 0 then
       begin
         if oY < 0 then
@@ -392,13 +422,14 @@ procedure TLTWaterEffect.Start;
 var
   I, J: Integer;
 begin
-  FDrawing := false;
+  FDrawing := False;
   FHeight := DstImage.Height;
   FWidth := DstImage.Width;
   SrcImage.Picture.Bitmap.PixelFormat := pf32bit;
   DstImage.Picture.Bitmap.Width := FWidth;
   DstImage.Picture.Bitmap.Height := FHeight;
   DstImage.Picture.Bitmap.PixelFormat := pf32bit;
+
   for I := 0 to 1 do
   begin
     try
@@ -437,8 +468,8 @@ procedure TLTWaterEffect.Stop;
 var
   I: Integer;
 begin
-  FTimer.Enabled := false;
-  FActive := false;
+  FTimer.Enabled := False;
+  FActive := False;
   while FDrawing do { loop };
   for I := 0 to 1 do
     SetLength(FHeightMap[I], 0);
@@ -448,8 +479,8 @@ procedure TLTWaterEffect.StopRain;
 begin
   if FRaining then
   begin
-    FRainTimer.Enabled := false;
-    FRaining := false;
+    FRainTimer.Enabled := False;
+    FRaining := False;
   end;
 end;
 
