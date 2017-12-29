@@ -1,6 +1,12 @@
 LT Water Effect Changelog
 =========================
 
+1.1.2
+Bug fixed: Invalid platforms in the project file
+
+1.1.1
+Optimized code
+
 1.1.0
 Bug fixed: The waves do not dissipate at the edges of the image
 
